@@ -1,6 +1,5 @@
 from classes import Class, adjust, note
 
-
 def grade_new(process:Class, f_dir:str):
     students = process.students
     with open(f_dir, 'w+') as fp:
@@ -49,6 +48,11 @@ def grade_new(process:Class, f_dir:str):
                         adjust(student)
                     elif add == 'n':
                         note(student)
+                    elif add == 'p':
+                        with open(f_dir[:-3]+'json', 'w+') as fp2:
+                            fp2.write(''student.id+'\n')
+                            fp2.write(process.to_json())
+                        return
                     elif add == 'q':
                         done = True
                     else:

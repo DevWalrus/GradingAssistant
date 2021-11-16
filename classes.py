@@ -1,7 +1,8 @@
 from dataclasses import dataclass
-from typing import Dict, List, Optional
+from typing import Dict, List, Union
+from dataclasses_json import dataclass_json
 
-
+@dataclass_json()
 @dataclass()
 class Class:
     name : str
@@ -20,6 +21,7 @@ class Class:
     def __get_name__(self):
         return '{} {} {}'.format(self.name, self.grader, str(self.year))
 
+@dataclass_json()
 @dataclass()
 class Adjustment:
     value: int
@@ -28,6 +30,7 @@ class Adjustment:
     def __to_string__(self):
         return '{}% {}'.format(self.value, self.message)
 
+@dataclass_json()
 @dataclass()
 class Note:
     message : str
@@ -35,6 +38,7 @@ class Note:
     def __to_string__(self):
         return 'NOTE: {}'.format(self.message)
 
+@dataclass_json()
 @dataclass()
 class Assignment:
     submitted : bool
@@ -60,6 +64,7 @@ class Assignment:
     def __add_note__(self, message):
         self.notes.append(Note(message))
 
+@dataclass_json()
 @dataclass()
 class Student:
     first_name:str
