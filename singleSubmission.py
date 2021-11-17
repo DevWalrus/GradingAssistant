@@ -1,4 +1,4 @@
-from classes import Class, adjust, note
+from classes import Class
 
 
 def grade_new(process:Class, f_dir:str):

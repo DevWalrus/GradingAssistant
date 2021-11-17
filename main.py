@@ -57,18 +57,15 @@ def grade_new(process:Class):
         single.grade_new(process, my_file)
 
 def grade_resume(process:Class):
+    f_name = input('What assignment are you grading? > ').lower()
     THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
     class_folder = os.path.join(THIS_FOLDER, "grades\{}_{}_{}\\".format(process.name, process.grader, process.year))
-    if not exists(class_folder):
-        os.mkdir(class_folder)
-        print('Directory {} was created'.format(class_folder))
-    f_name = input('What assignment are you grading? > ').lower()
     my_file = os.path.join(class_folder, "{}.txt".format(f_name))
 
     if f_name[0] == 'l':
-        labs.grade_resume(process, my_file)
+        labs.grade_resume(my_file)
     else:
-        single.grade_resume(process, my_file)
+        single.grade_resume(my_file)
 
 def main():
     classes = get_classes()
