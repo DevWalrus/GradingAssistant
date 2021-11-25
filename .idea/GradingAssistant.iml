@@ -2,12 +2,15 @@
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/grades/csci141_hopkins_2211" />
       <excludeFolder url="file://$MODULE_DIR$/grades/test01_doe_1" />
       <excludeFolder url="file://$MODULE_DIR$/grades/test02_doe_2" />
       <excludeFolder url="file://$MODULE_DIR$/students/dft" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="15" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="lib" level="project" />
   </component>
 </module>
