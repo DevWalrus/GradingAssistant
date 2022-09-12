@@ -1,12 +1,13 @@
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Dict, List, re, Tuple
 from dataclasses_json import dataclass_json
+
 
 @dataclass_json()
 @dataclass()
 class Adjustment:
     value: int
-    message : str
+    message: str
 
     def __to_string__(self):
         return '{}% {}'.format(self.value, self.message)
@@ -14,26 +15,34 @@ class Adjustment:
     def __eq__(self, other):
         return self.message == other.message and self.value == other.value
 
+
 @dataclass_json()
 @dataclass()
 class Note:
-    message : str
+    message: str
 
     def __to_string__(self):
         return 'NOTE: {}'.format(self.message)
 
+
 @dataclass_json()
 @dataclass()
 class Assignment:
-    submitted : bool
-    pss_submitted : bool
-    grade : int
-    adjustments : List[Adjustment]
-    notes : List[Note]
+    submitted: bool
+    grade: int
+    late_flag: bool
+    adjustments: list
+    notes: list
+
+    def __init__(self):
+        self.submitted = True
+        self.grade = 100
+        self.late_flag = False
+        self.adjustments = []
+        self.notes = []
 
     def __to_string__(self):
         result = 'Submission {}\n'.format('[X]' if self.submitted else '[ ]')
-        result += 'PSS Submission {}\n'.format('[X]' if self.pss_submitted else '[ ]')
         result += 'Grade {}/100\n'.format(self.grade)
         for adjustment in list(self.adjustments):
             result += '{}\n'.format(adjustment.__to_string__())
@@ -49,29 +58,35 @@ class Assignment:
 
     def finalize(self):
         for adjustment in self.adjustments:
-            if adjustment.__eq__(Adjustment(-10, "Late Lab Submission")):
-                print("-10 found")
-                if self.grade + 10 <= 90:
-                    print("-10 removed")
+            self.grade += adjustment.value
+        if self.late_flag:
+            self.grade *= 0.8
 
-                    continue
-            elif adjustment.__eq__(Adjustment(-20, "Late Lab Submission")):
-                print("-20 found")
+    def set_late(self):
+        self.late_flag = True
 
-                if self.grade + 20 <= 80:
-                    print("-20 removed")
+    def set_missing(self):
+        self.submitted = False
 
-                    continue
-            self.grade += adjustment.value #gotta move this up or run it first, the things are being found but not removed cuz its happening before the other adjustments (-50)
+    def absent_pss(self):
+        self.__add_adjustment__(-15, "Absent for PSS")
+
 
 @dataclass_json()
 @dataclass()
 class Student:
-    first_name : str
-    last_name : str
-    id : str
-    assignment : Assignment
-    finalized : bool = False
+    first_name: str
+    last_name: str
+    id: str
+    assignment: Assignment
+    finalized: bool
+
+    def __init__(self, first_name, last_name, id, assignment):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.id = id
+        self.assignment = assignment
+        self.finalized = False
 
     def __to_string__(self):
         return '{}\t\t{}\t\t{}\n{}'.format(self.first_name, self.last_name, self.id, self.assignment.__to_string__())
@@ -81,7 +96,7 @@ class Student:
 
     def __finalize__(self):
         self.assignment.finalize()
-        if len(self.assignment.adjustments) == 0:
+        if self.assignment.grade == 100:
             self.assignment.__add_note__("Great Job!")
         self.finalized = True
 
@@ -113,20 +128,25 @@ class Student:
                 continue
         self.assignment.__add_adjustment__(int(value), message)
 
+
 @dataclass_json()
 @dataclass()
 class Class:
-    name : str
-    grader : str
-    year : int
-    students : Dict[str, Student]
+    name: str
+    grader: str
+    year: int
+    students: dict
 
     def __print__(self):
         print('Class: {}'.format(self.name))
         print('\tFirst \tLast \tID')
         students = self.students
         for student in students:
-            print('\t{} \t{} \t{}'.format(students[student].first_name, students[student].last_name, students[student].id))
+            print('\t{} \t{} \t{}'.format(students[student].first_name, students[student].last_name,
+                                          students[student].id))
 
     def __get_name__(self):
         return '{} {} {}'.format(self.name, self.grader, str(self.year))
+
+    def get_stus(self) -> Dict[Tuple[str, str], Student]:
+        return dict(map(lambda stu: ((stu.last_name, stu.first_name), stu), self.students.values()))
