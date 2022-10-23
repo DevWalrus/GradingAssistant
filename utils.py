@@ -4,6 +4,11 @@ from typing import List, Tuple
 
 from classes import Student
 
+GITHUB_VALUE = 0
+
+def set_github_value(value:int):
+    global GITHUB_VALUE
+    GITHUB_VALUE = value
 
 def lst_tup_to_str(tuples: List[Tuple]) -> str:
     pretty = ""
@@ -18,20 +23,19 @@ def lst_tup_to_str(tuples: List[Tuple]) -> str:
 def absent_pss(stu: Student):
     stu.assignment.absent_pss()
 
+def no_github(stu: Student):
+    stu.assignment.no_github(GITHUB_VALUE)
 
 def stu_late(stu: Student):
     stu.assignment.set_late()
 
-
 def stu_missing(stu: Student):
     stu.assignment.set_missing()
-    stu.__finalize__()
-
 
 def process_stus(msg, process, action):
     while True:
         stu_str = input(f"Were there any {msg}? ([n]o or list student names Last, "
-                        "First separated by a semicolon) ")
+                        "First separated by a semicolon) > ")
         if stu_str.lower() == "n" or stu_str.lower() == "no" or stu_str == "":
             break
         stu_str = re.split("[ ]*;[ ]*", stu_str)
@@ -56,7 +60,13 @@ def grade(student: Student, f_dir: str, process, fp):
     if not student.assignment.submitted:
         print('Skipping {} (They have no lab submission)'.format(str_stu))
         student.assignment.__add_adjustment__(-75, "No Lab Submission")
+        student.__finalize__()
+        with open(f_dir[:-3] + 'json', 'w') as fp2:
+            fp2.write(process.to_json())
+        fp.write(student.__to_string__())
+        return
     else:
+
         print('Grading {}'.format(str_stu))
         done = False
         while not done:
@@ -74,7 +84,7 @@ def grade(student: Student, f_dir: str, process, fp):
             elif add == 'n':
                 student.__add_note__()
             elif add == 'p':
-                exit(os.EX_OK)
+                exit(0)
             elif add == 'm':
                 student.__finalize__()
                 with open(f_dir[:-3] + 'json', 'w') as fp2:

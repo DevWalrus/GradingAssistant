@@ -10,6 +10,17 @@ from classes import Class
 def grade_new(process: Class, f_dir: str):
     students = process.students
     with open(f_dir, 'w+') as fp:
+        print("\n...GRADING THE GITHUB PORTION...\n")
+        if input("Was there a GitHub portion to this assignment? [y]es or [n]o ").lower()[0] == "y":
+            while True:
+                try:
+                    utils.set_github_value(int(input("How much is this item worth? > ")))
+                    break
+                except ValueError:
+                    print('\tERROR: Invalid input, please try again')
+                    continue
+            utils.process_stus("missing GitHub submissions", process, utils.no_github)
+
         print("\n...GRADING THE PSS SUBMISSION PORTION...\n")
         utils.process_stus("absences during the pss", process, utils.absent_pss)
 
@@ -33,8 +44,6 @@ def grade_resume(f_dir: str):
     students = {}
 
     for student_id in process.students:
-        print(process.students[student_id])
-
         stu = classes.Student(process.students[student_id]['first_name'],
                               process.students[student_id]['last_name'],
                               process.students[student_id]['id'],
@@ -43,7 +52,6 @@ def grade_resume(f_dir: str):
             stu.assignment.__add_adjustment__(adj['value'], adj['message'])
         for note in process.students[student_id]['assignment']['notes']:
             stu.assignment.__add_note__(note['message'])
-        print(stu)
 
         if not process.students[student_id]['finalized']:
             students[student_id] = stu
@@ -53,7 +61,7 @@ def grade_resume(f_dir: str):
 
         print("\n...CONTINUING GRADING THE STUDENTS...\n")
         for student in process.students.values():
-            if not student.finalized:
+            if not student.finalized: # "Sanity" check
                 utils.grade(student, f_dir, process, fp)
         print("\n...FINISHED GRADING...\n...CLEANING UP...\n")
         os.remove(f_dir[:-3] + 'json')

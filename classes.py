@@ -71,6 +71,9 @@ class Assignment:
     def absent_pss(self):
         self.__add_adjustment__(-15, "Absent for PSS")
 
+    def no_github(self, value):
+        self.__add_adjustment__(value, "No Github Submission")
+
 
 @dataclass_json()
 @dataclass()
@@ -118,7 +121,9 @@ class Student:
         message = ""
         while True:
             try:
-                value = input("\tWhat how much is this item worth? > ")
+                value = input("\tHow much is this item worth? > ")
+                if value[0] == 'c':
+                    return
                 message = input("\tWhat message would you like to associate with this adjustment ('c' to cancel) > ")
                 if value[0] == 'c' or message[0] == 'c':
                     return
