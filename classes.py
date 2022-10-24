@@ -65,10 +65,16 @@ class Assignment:
         self.notes.append(Note(message))
 
     def finalize(self):
+        functional_grade = 75
+        paperwork_grade = 25
         for adjustment in self.adjustments:
-            self.grade += adjustment.value
+            if adjustment.message != "Absent for PSS" and adjustment.message != "No In-Lab":
+                functional_grade += adjustment.value
+            else:
+                paperwork_grade += adjustment.value
         if self.late_flag:
-            self.grade *= 0.8
+            functional_grade *= 0.8 # The 80% should only come out of the functional portion
+        self.grade = functional_grade + paperwork_grade
 
     def set_late(self):
         self.late_flag = True
@@ -83,7 +89,7 @@ class Assignment:
         self.__add_adjustment__(-10, "No In-Lab")
 
     def no_github(self, value):
-        self.__add_adjustment__(value, "No Github Submission")
+        self.__add_adjustment__(value, "No Github Usage")
 
 
 @dataclass_json()
