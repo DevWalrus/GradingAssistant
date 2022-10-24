@@ -50,7 +50,7 @@ def grade_class(process: Class) -> None:
     :param process:
     :return:
     """
-    if input("Do you want to start grading a new assignment? ('y' or 'n') > ")[0].lower() == 'y':
+    if input("Do you want to start grading a new assignment? ([y]es or [n]o) > ")[0].lower() == 'y':
         grade_new(process)
     else:
         grade_resume(process)
@@ -71,7 +71,7 @@ def grade_new(process: Class):
     my_file = os.path.join(class_folder, "{}.txt".format(f_name))
 
     if exists(my_file):
-        if input('WARNING: The file {} already exists, do you want to overwrite it? (\'y\' or \'n\') > '.format(
+        if input('WARNING: The file {} already exists, do you want to overwrite it? ([y]es or [n]o) > '.format(
                 my_file))[0].lower() != 'y':
             print("QUITTING: Have a great day!")
             return

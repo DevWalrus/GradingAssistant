@@ -41,6 +41,14 @@ class Assignment:
         self.adjustments = []
         self.notes = []
 
+    def setup(self, **kwargs):
+        self.__init__()
+        self.submitted = kwargs["submitted"]
+        self.grade = kwargs["grade"]
+        self.late_flag = kwargs["late_flag"]
+
+
+
     def __to_string__(self):
         result = 'Submission {}\n'.format('[X]' if self.submitted else '[ ]')
         result += 'Grade {}/100\n'.format(self.grade)
@@ -70,6 +78,9 @@ class Assignment:
 
     def absent_pss(self):
         self.__add_adjustment__(-15, "Absent for PSS")
+
+    def in_missing(self):
+        self.__add_adjustment__(-10, "No In-Lab")
 
     def no_github(self, value):
         self.__add_adjustment__(value, "No Github Submission")

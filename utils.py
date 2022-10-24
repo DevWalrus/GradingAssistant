@@ -26,6 +26,9 @@ def absent_pss(stu: Student):
 def no_github(stu: Student):
     stu.assignment.no_github(GITHUB_VALUE)
 
+def in_missing(stu: Student):
+    stu.assignment.in_missing()
+
 def stu_late(stu: Student):
     stu.assignment.set_late()
 
