@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, List, re, Tuple
+from typing import Dict, Tuple
 from dataclasses_json import dataclass_json
 
 
@@ -73,8 +73,10 @@ class Assignment:
             else:
                 paperwork_grade += adjustment.value
         if self.late_flag:
+            old_final = functional_grade
             functional_grade *= 0.8 # The 80% should only come out of the functional portion
-        self.grade = functional_grade + paperwork_grade
+            self.__add_adjustment__(round(functional_grade-old_final, 2), "Late Penalty (20% of the lab grade)")
+        self.grade = round(functional_grade + paperwork_grade, 2)
 
     def set_late(self):
         self.late_flag = True

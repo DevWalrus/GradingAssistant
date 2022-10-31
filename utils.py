@@ -64,7 +64,7 @@ def grade(student: Student, f_dir: str, process, fp):
         print('Skipping {} (They have no lab submission)'.format(str_stu))
         student.assignment.__add_adjustment__(-75, "No Lab Submission")
         student.__finalize__()
-        with open(f_dir[:-3] + 'json', 'w') as fp2:
+        with open(f_dir + 'json', 'w') as fp2:
             fp2.write(process.to_json())
         fp.write(student.__to_string__())
         return
@@ -83,7 +83,13 @@ def grade(student: Student, f_dir: str, process, fp):
                     print('\tERROR: Invalid input, please try again')
                     continue
             if add == 'a':
-                student.__add_adjustment__()
+                while True:
+                    try:
+                        student.__add_adjustment__()
+                        break
+                    except ValueError:
+                        print('\tERROR: Invalid input, please try again')
+                        continue
             elif add == 'n':
                 student.__add_note__()
             elif add == 'p':

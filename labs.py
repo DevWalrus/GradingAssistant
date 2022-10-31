@@ -51,6 +51,7 @@ def grade_new(process: Class, f_dir: str):
 
 
 def grade_resume(f_dir: str):
+    print(f_dir)
     with open(f_dir[:-3] + 'json', 'r') as fp2:
         data_str = fp2.read()
     fp2.close()

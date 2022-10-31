@@ -11,6 +11,7 @@ from typing import List
 PATH = 'students/'
 EXT = 'csv'
 
+THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 
 def pretty_print(classes: List[Class]) -> None:
     """
@@ -50,42 +51,46 @@ def grade_class(process: Class) -> None:
     :param process:
     :return:
     """
-    if input("Do you want to start grading a new assignment? ([y]es or [n]o) > ")[0].lower() == 'y':
-        grade_new(process)
+    new = input("Do you want to start grading a new assignment? ([y]es or [n]o) > ")[0].lower()
+    f_name = input('What assignment are you grading? > ').lower()
+    if new == 'y':
+        grade_new(process, f_name)
     else:
-        grade_resume(process)
+        grade_resume(process, f_name)
 
 
-def grade_new(process: Class):
+def grade_new(process: Class, f_name: str):
     """
 
     :param process:
+    :param f_name:
     :return:
     """
-    THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
     class_folder = os.path.join(THIS_FOLDER, "grades", f"{process.name}_{process.grader}_{process.year}")
     if not exists(class_folder):
         os.mkdir(class_folder)
         print('Directory {} was created'.format(class_folder))
-    f_name = input('What assignment are you grading? > ').lower()
-    my_file = os.path.join(class_folder, "{}.txt".format(f_name))
 
-    if exists(my_file):
+    if exists(f_name):
         if input('WARNING: The file {} already exists, do you want to overwrite it? ([y]es or [n]o) > '.format(
-                my_file))[0].lower() != 'y':
+                f_name))[0].lower() != 'y':
             print("QUITTING: Have a great day!")
             return
 
-    with open(my_file[:-3] + "json", 'w+') as fp2:
+    with open(f_name[:-3] + "json", 'w+') as fp2:
         fp2.write(process.to_json())
-    labs.grade_new(process, my_file)
+    labs.grade_new(process, f_name)
 
 
-def grade_resume(process: Class):
-    f_name = input('What assignment are you grading? > ').lower()
-    THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
-    class_folder = os.path.join(THIS_FOLDER, "grades", f"{process.name}_{process.grader}_{process.year}")
-    my_file = os.path.join(class_folder, f"{f_name}.txt")
+def grade_resume(process: Class, f_name: str):
+    my_file = os.path.join(THIS_FOLDER, "grades", f"{process.name}_{process.grader}_{process.year}", f"{f_name}.txt")
+    if not exists(my_file):
+        if input(f'WARNING: The file {my_file} does not exist, do you want to begin grading it? ([y]es or [n]o) > ')[
+            0].lower() == 'y':
+            grade_new(process, my_file)
+        else:
+            print("QUITTING: Have a great day!")
+            exit()
     labs.grade_resume(my_file)
 
 
